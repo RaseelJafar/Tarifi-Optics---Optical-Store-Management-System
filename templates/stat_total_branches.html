@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Total Branches{% endblock %}
+
+{% block content %}
+  <style>
+    .stat-card {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .stat-card h1 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #333;
+    }
+    .stat-card p {
+      font-size: 1.2rem;
+      color: #555;
+    }
+    .branches-table {
+      width: 100%;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    .branches-table th,
+    .branches-table td {
+      border: 1px solid #333;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .branches-table th {
+      background: #727171;
+      color: #fff;
+    }
+    /* Chart container */
+    #locationChart {
+      max-width: 800px;
+      margin: 2rem auto;
+      display: block;
+    }
+  </style>
+
+  <div class="stat-card">
+    <h1>📋 Total Branches</h1>
+    <p>There are <strong>{{ total_branches }}</strong> branches in the system.</p>
+  </div>
+
+  <table class="branches-table">
+    <thead>
+      <tr>
+        <th>Branch ID</th>
+        <th>Location</th>
+        <th>Phone Number</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for branch_id, location, phone in branches_details %}
+      <tr>
+        <td>{{ branch_id }}</td>
+        <td>{{ location }}</td>
+        <td>{{ phone }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- 4) Chart: Branches per location -->
+  <canvas id="locationChart" width="800" height="400"></canvas>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const labels = {{ loc_labels | tojson }};
+    const data   = {{ loc_values | tojson }};
+
+    new Chart(
+      document.getElementById('locationChart').getContext('2d'),
+      {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Branches per Location',
+            data: data
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              title: { display: true, text: 'Location' }
+            },
+            y: {
+              title: { display: true, text: 'Number of Branches' },
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1,
+                callback: function(value) {
+                  // only display integer tick labels
+                  return Number.isInteger(value) ? value : '';
+                }
+              }
+            }
+          }
+        }
+      }
+    );
+  </script>
+{% endblock %}

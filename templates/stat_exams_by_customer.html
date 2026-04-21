@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Exams by Customer{% endblock %}
+
+{% block content %}
+  <style>
+    .filter-bar {
+      max-width: 800px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .filter-bar select,
+    .filter-bar input[type="month"],
+    .filter-bar button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      margin-right: 1rem;
+    }
+    .stat-card {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #fff;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .exams-table {
+      width: 100%;
+      max-width: 900px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    .exams-table th,
+    .exams-table td {
+      border: 1px solid #333;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .exams-table th {
+      background: #727171;
+      color: #fff;
+    }
+  </style>
+
+  <h1>🩺 Examinations by Customer</h1>
+
+  <div class="filter-bar">
+    <form method="get" action="{{ url_for('stat_exams_by_customer') }}">
+      <label for="customer_id">Customer:</label>
+      <select name="customer_id" id="customer_id" onchange="this.form.submit()">
+        <option value="" {% if not selected_customer %}selected{% endif %}>
+          — Choose a Customer —
+        </option>
+        {% for cid, cname in all_customers %}
+          <option value="{{ cid }}" {% if cid == selected_customer %}selected{% endif %}>
+            {{ cname }} (ID: {{ cid }})
+          </option>
+        {% endfor %}
+      </select>
+
+      <label for="period">Month:</label>
+      <input
+        type="month"
+        id="period"
+        name="period"
+        value="{{ selected_period }}"
+        onchange="this.form.submit()"
+      />
+
+      <button type="submit">Apply</button>
+    </form>
+  </div>
+
+  {% if selected_customer %}
+    <div class="stat-card">
+      <p>
+        Customer <strong>{{ selected_customer }}</strong> has taken
+        <strong>{{ total_exams }}</strong> examination{{ total_exams != 1 and 's' or '' }}
+        {% if selected_period %}in {{ selected_period }}{% endif %}.
+      </p>
+    </div>
+
+    {% if exams %}
+      <table class="exams-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Exam Name</th>
+            <th>Result</th>
+            <th>Profit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for date, name, result, profit in exams %}
+          <tr>
+            <td>{{ date }}</td>
+            <td>{{ name }}</td>
+            <td>{{ result }}</td>
+            <td>{{ profit }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p style="text-align:center; color:#777; margin-top:2rem;">
+        No examinations{{ selected_period and ' in ' ~ selected_period }} found for this customer.
+      </p>
+    {% endif %}
+  {% else %}
+    <p style="text-align:center; color:#777; margin-top:2rem;">
+      Please select a customer above to view their examination history.
+    </p>
+  {% endif %}
+{% endblock %}

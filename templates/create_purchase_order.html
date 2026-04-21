@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}New Purchase Order{% endblock %}
+{% block content %}
+<h1>➕ New Purchase Order</h1>
+
+<form action="{{ url_for('submit_purchase_order') }}" method="POST">
+  <label>Supplier:</label>
+  <select name="supplier_id" required>
+    <option value="">-- Select Supplier --</option>
+    {% for supplier in suppliers %}
+    <option value="{{ supplier[0] }}">{{ supplier[1] }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Branch:</label>
+  <select name="branch_id" required>
+    <option value="">-- Select Branch --</option>
+    {% for branch in branches %}
+    <option value="{{ branch[0] }}">{{ branch[1] }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Purchase Date:</label>
+  <input type="date" 
+         name="purchase_date" 
+         required 
+         min="{{ tomorrow_date }}"
+         onchange="validateDate(this)"
+         >
+
+  <h3>Products</h3>
+  <div id="product-rows">
+    <div class="product-row">
+      <select name="product_id[]" required onchange="updateCost(this)">
+        <option value="">-- Select Product --</option>
+        {% for product in products %}
+        <option value="{{ product[0] }}" data-cost="{{ product[2] }}">{{ product[1] }}</option>
+        {% endfor %}
+      </select>
+      <input type="number" name="quantity[]" placeholder="Quantity" required min="1" onchange="calculateSubtotal(this)">
+      <input type="number" step="0.01" name="cost_per_unit[]" placeholder="Cost per Unit" readonly>
+      <span class="subtotal">Subtotal: $0.00</span>
+    </div>
+  </div>
+  <button type="button" onclick="addRow()">+ Add Product</button>
+
+  <br><br>
+  <div id="order-total" style="font-weight: bold; font-size: 1.2em;">Total Order: $0.00</div>
+  <br>
+  <button type="submit" class="btn btn-success">Submit Order</button>
+</form>
+
+<script>
+  function updateCost(selectElement) {
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const cost = selectedOption.dataset.cost;
+    const costInput = selectElement.parentElement.querySelector('input[name="cost_per_unit[]"]');
+    
+    if (cost) {
+      costInput.value = parseFloat(cost).toFixed(2);
+      calculateSubtotal(selectElement.parentElement.querySelector('input[name="quantity[]"]'));
+    } else {
+      costInput.value = '';
+      selectElement.parentElement.querySelector('.subtotal').textContent = 'Subtotal: $0.00';
+    }
+  }
+
+  function calculateSubtotal(quantityInput) {
+    const row = quantityInput.parentElement;
+    const quantity = parseFloat(quantityInput.value) || 0;
+    const cost = parseFloat(row.querySelector('input[name="cost_per_unit[]"]').value) || 0;
+    const subtotal = quantity * cost;
+    
+    row.querySelector('.subtotal').textContent = `Subtotal: ${subtotal.toFixed(2)}`;
+    calculateTotal();
+  }
+
+  function calculateTotal() {
+    let total = 0;
+    document.querySelectorAll('.product-row').forEach(row => {
+      const quantity = parseFloat(row.querySelector('input[name="quantity[]"]').value) || 0;
+      const cost = parseFloat(row.querySelector('input[name="cost_per_unit[]"]').value) || 0;
+      total += quantity * cost;
+    });
+    
+    // Update total display (you can add this element to show total)
+    const totalElement = document.getElementById('order-total');
+    if (totalElement) {
+      totalElement.textContent = `Total Order: ${total.toFixed(2)}`;
+    }
+  }
+
+  function addRemoveButton(row) {
+    // Check if remove button already exists
+    if (row.querySelector('.remove-btn')) return;
+    
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.textContent = '× Remove';
+    removeBtn.className = 'btn btn-danger btn-sm remove-btn';
+    removeBtn.onclick = function() { 
+      if(document.querySelectorAll('.product-row').length > 1) {
+        this.parentElement.remove(); 
+        calculateTotal();
+      }
+    };
+    row.appendChild(removeBtn);
+  }
+
+  function addRow() {
+    const row = document.querySelector(".product-row").cloneNode(true);
+    // Clear the input values in the new row
+    row.querySelectorAll('input').forEach(input => input.value = '');
+    row.querySelector('select').selectedIndex = 0;
+    row.querySelector('.subtotal').textContent = 'Subtotal: $0.00';
+    
+    // Remove any existing remove button from cloned row
+    const existingBtn = row.querySelector('.remove-btn');
+    if (existingBtn) existingBtn.remove();
+    
+    // Add remove button to new row
+    addRemoveButton(row);
+    
+    // Add remove button to first row if it doesn't have one
+    const firstRow = document.querySelector('.product-row');
+    addRemoveButton(firstRow);
+    
+    document.getElementById("product-rows").appendChild(row);
+  }
+
+  // Add this to your <script> section
+function validateDate(input) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set to midnight for accurate comparison
+  const selectedDate = new Date(input.value);
+  
+  if (selectedDate <= today) {
+    alert("Purchase date must be in the future!");
+    input.value = ""; // Clear invalid date
+  }
+}
+</script>
+{% endblock %}

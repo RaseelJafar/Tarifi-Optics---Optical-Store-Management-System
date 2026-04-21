@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Manage Branches{% endblock %}
+{% block content %}
+  <h1>📍 Branches</h1>
+
+  <!-- Add Branch Card -->
+  <div class="card">
+    <h2>Add New Branch</h2>
+    <form action="{{ url_for('add_branch') }}" method="post">
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" placeholder="e.g. Ramallah" required/>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone" name="phone" placeholder="e.g. 0594123456" required/>
+      </div>
+      <button type="submit">➕ Add Branch</button>
+    </form>
+  </div>
+
+  <!-- List of Existing Branches -->
+  <div class="card">
+    <h2>Existing Branches</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Location</th>
+          <th>Phone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for (bid, loc, phone) in branches %}
+        <tr>
+          <td>{{ bid }}</td>
+          <td>{{ loc }}</td>
+          <td>{{ phone }}</td>
+          <td class="actions">
+            <!-- Edit button toggles hidden form -->
+            <button class="btn small" onclick="document.getElementById('edit-form-{{ bid }}').classList.toggle('hidden')">
+              ✏️ Edit
+            </button>
+            <form id="edit-form-{{ bid }}"
+                  class="hidden inline-form"
+                  action="{{ url_for('edit_branch', branch_id=bid) }}"
+                  method="post">
+              <input type="text" name="location" value="{{ loc }}" required/>
+              <input type="text" name="phone" value="{{ phone }}" required/>
+              <button type="submit">✔️</button>
+            </form>
+
+            <!-- Delete -->
+            <form class="inline-form"
+                  action="{{ url_for('delete_branch', branch_id=bid) }}"
+                  method="post">
+              <button type="submit" class="btn danger">🗑️ Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}User Overview{% endblock %}
+
+{% block content %}
+  <style>
+    .filter-bar {
+      max-width: 500px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .filter-bar select,
+    .filter-bar button {
+      padding: 0.5rem 1rem;
+      margin-right: 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .summary-table, .details-table {
+      width: 100%;
+      max-width: 600px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    .summary-table th, .summary-table td,
+    .details-table th, .details-table td {
+      border: 1px solid #333;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .summary-table th {
+      background: #727171;
+      color: #fff; 
+    }
+    .details-table th { 
+      background: #555;
+      color: #fff; 
+    }
+  </style>
+
+  <h1>👥 User Overview</h1>
+
+  <div class="summary-section">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Type</th><th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Owners</td><td>{{ owners_count }}</td></tr>
+        <tr><td>Employees</td><td>{{ employees_count }}</td></tr>
+        <tr><td>Customers</td><td>{{ customers_count }}</td></tr>
+        <tr>
+          <td><strong>Total Users</strong></td>
+          <td><strong>{{ total_users }}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="filter-bar">
+    <form method="get" action="{{ url_for('stat_users') }}">
+      <label for="type">Show:</label>
+      <select name="type" id="type">
+        <option value="all" {% if user_type=='all' %}selected{% endif %}>All</option>
+        <option value="owner" {% if user_type=='owners' %}selected{% endif %}>Owners</option>
+        <option value="employee" {% if user_type=='employees' %}selected{% endif %}>Employees</option>
+        <option value="customer" {% if user_type=='customers' %}selected{% endif %}>Customers</option>
+      </select>
+      <button type="submit">Go</button>
+    </form>
+  </div>
+
+  <div class="details-section">
+    {% if details %}
+      <table class="details-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Type</th><th>user ID</th><th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for typ, uid, uname in details %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ typ }}</td>
+            <td>{{ uid }}</td>
+            <td>{{ uname }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p style="text-align:center; color:#777; margin-top:2rem;">
+        No {{ user_type }} found.
+      </p>
+    {% endif %}
+  </div>
+{% endblock %}

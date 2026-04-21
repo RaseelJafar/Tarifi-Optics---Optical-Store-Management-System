@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Branches in {{ city }}{% endblock %}
+
+{% block content %}
+  <style>
+    .stat-card {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .stat-card h1 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #333;
+    }
+    .stat-card p {
+      font-size: 1.2rem;
+      color: #555;
+    }
+    .branches-table {
+      width: 100%;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    .branches-table th,
+    .branches-table td {
+      border: 1px solid #333;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .branches-table th {
+      background: #727171;
+    }
+
+    .city-selector {
+      max-width: 400px;
+      margin: 1rem auto;
+      text-align: center;
+    }
+    .city-selector select {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+  </style>
+
+  <div class="city-selector">
+    <label for="city">Choose City: </label>
+    <select id="city" onchange="window.location.href=this.value">
+      {% for loc in all_cities %}
+        <option
+          value="{{ url_for('stat_branches_by_city', city=loc) }}"
+          {% if loc == city %}selected{% endif %}
+        >
+          {{ loc }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="stat-card">
+    <h1>📍 Branches in {{ city }}</h1>
+    <p>There are <strong>{{ count }}</strong> branches located in <em>{{ city }}</em>.</p>
+  </div>
+
+  {% if branches %}
+    <table class="branches-table">
+      <thead>
+        <tr>
+          <th>Branch ID</th>
+          <th>Location</th>
+          <th>Phone Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for branch_id, location, phone in branches %}
+        <tr>
+          <td>{{ branch_id }}</td>
+          <td>{{ location }}</td>
+          <td>{{ phone }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="text-align: center; color: #777; margin-top: 2rem;">
+      No branches found in {{ city }}.
+    </p>
+  {% endif %}
+{% endblock %}

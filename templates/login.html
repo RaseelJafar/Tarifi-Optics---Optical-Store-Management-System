@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tarifi Optics | Login & Sign Up</title>
+  <link rel="stylesheet" href="../static/css/login.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="form-box">
+      <h2 id="form-title">{{ 'Sign Up' if form_type == 'signup' else 'Login' }}</h2>
+
+      {% if message %}
+      <p style="color: red; font-weight: bold;">{{ message }}</p>
+      {% endif %}
+
+      {% if form_type == 'signup' %}
+      <!-- Sign Up Form -->
+      <form action="/signup" method="POST">
+        <div class="input-group">
+          <input type="text" name="name" required />
+          <label>Full Name</label>
+        </div>
+        <div class="input-group">
+          <input type="text" name="user_ID" required />
+          <label>User ID</label>
+        </div>
+        <div class="input-group">
+          <input type="password" name="password" required />
+          <label>Password</label>
+        </div>
+        <div class="input-group">
+          <input type="password" name="confirm_password" required />
+          <label>Confirm Password</label>
+        </div>
+        <button type="submit">Sign Up</button>
+        <p>Already have an account? <a href="/login">Login</a></p>
+      </form>
+
+      {% else %}
+      <!-- Login Form -->
+      <form action="/login" method="POST">
+        <div class="input-group">
+          <input type="text" name="user_ID" required />
+          <label>User ID</label>
+        </div>
+        <div class="input-group">
+          <input type="password" name="password" required />
+          <label>Password</label>
+        </div>
+        <button type="submit">Login</button>
+        <p>Don’t have an account? <a href="/signup">Sign Up</a></p>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

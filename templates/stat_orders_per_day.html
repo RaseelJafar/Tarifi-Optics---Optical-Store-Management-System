@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}Orders Overview{% endblock %}
+
+{% block content %}
+  <style>
+    .filter-bar {
+      max-width: 700px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .filter-bar select,
+    .filter-bar input[type="date"],
+    .filter-bar button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      margin-right: 1rem;
+    }
+    .stat-card {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #fff;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .orders-table {
+      width: 100%;
+      max-width: 900px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    .orders-table th,
+    .orders-table td {
+      border: 1px solid #333;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .orders-table th {
+      background: #727171;
+      color: #fff;
+    }
+    #datePie {
+      max-width: 600px;
+      margin: 2rem auto;
+      display: block;
+    }
+  </style>
+
+  <h1>🗂️ Orders Overview</h1>
+
+  <!-- Pie chart (depends only on selected_date) -->
+  <canvas id="datePie" width="400" height="400"></canvas>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <form method="get" action="{{ url_for('stat_orders_per_day') }}">
+      <label for="branch_id">Branch:</label>
+      <select name="branch_id" id="branch_id">
+        <option value="" {% if not selected_branch %}selected{% endif %}>&mdash; All Branches &mdash;</option>
+        {% for bid, loc in all_branches %}
+          <option value="{{ bid }}" {% if bid == selected_branch %}selected{% endif %}>
+            {{ loc }} (ID: {{ bid }})
+          </option>
+        {% endfor %}
+      </select>
+
+      <label for="order_date">Date:</label>
+      <input 
+        type="date" 
+        id="order_date" 
+        name="order_date" 
+        value="{{ selected_date or '' }}"
+      />
+
+      <button type="submit">Apply</button>
+    </form>
+  </div>
+
+  <!-- Summary card -->
+  <div class="stat-card">
+    <p>
+      Showing <strong>{{ total_orders }}</strong> order{{ total_orders != 1 and 's' or '' }}
+      {% if selected_branch %}
+        in branch <strong>{{ selected_branch }}</strong>
+      {% endif %}
+      {% if selected_date %}
+        on <strong>{{ selected_date }}</strong>
+      {% endif %}.
+    </p>
+  </div>
+
+  <!-- Orders table -->
+  {% if orders %}
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer ID</th>
+          <th>Branch ID</th>
+          <th>Date</th>
+          <th>Total Price</th>
+          <th>Paid Amount</th>
+          <th>Profit</th>
+          <th>Discount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for oid, cid, bid, date, total, paid, profit, discount in orders %}
+        <tr>
+          <td>{{ oid }}</td>
+          <td>{{ cid }}</td>
+          <td>{{ bid }}</td>
+          <td>{{ date }}</td>
+          <td>{{ total }}</td>
+          <td>{{ paid }}</td>
+          <td>{{ profit }}</td>
+          <td>{{ discount }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="text-align:center; color:#777; margin-top:2rem;">
+      No orders match the selected criteria.
+    </p>
+  {% endif %}
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const labels = {{ pie_labels | tojson }};
+    const data   = {{ pie_data   | tojson }};
+
+    new Chart(
+      document.getElementById('datePie').getContext('2d'),
+      {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{ data: data }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'right' },
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  const val = ctx.parsed;
+                  const sum = data.reduce((a,b)=>a+b,0);
+                  const pct = sum ? ((val/sum)*100).toFixed(1) : 0;
+                  return `${ctx.label}: ${val} (${pct}%)`;
+                }
+              }
+            }
+          }
+        }
+      }
+    );
+  </script>
+{% endblock %}

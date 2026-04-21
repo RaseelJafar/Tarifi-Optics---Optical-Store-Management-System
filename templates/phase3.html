@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/phase3.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<title>Phase 3</title>
+
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <div class="start">
+                    <div class="logo"> <img src="../static/images/logo.png" /> </div>
+                </div>
+                <div class="end">
+                    <div class="Navlist">
+                        <ul>
+                            <li> <a href="#"> Home </a></li>
+                            <li> <a href="#"> login </a></li>
+                            <li> <a href="#"> Products </a></li>
+                            <li> <a href="#"> Book Exam </a></li>
+                            <li> <a href="#"> Branches </a></li>
+                            <li> <a href="#"> Contact </a></li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+    </header>
+    <div class="primary_container">
+        <div class="container_forms">
+            <div class = "insert">
+                <form action="/insert" method="POST">
+                    <h3>Insert</h3>
+                    <label for="customer_id">customer_id:</label>
+                    <input type="text" id="customer_id" name="customer_id" required><br>
+
+                    <label for="name">name:</label>
+                    <input type="text" id="name" name="name" required><br>
+
+                    <label for="phone_number">Phone Number:</label>
+                    <input type="tel" id="phone_number" name="phone_number" required><br>
+                    
+                    <label for="date_of_birth">Date of Birth:</label>
+                    <input type="date" id="date_of_birth" name="date_of_birth" required><br>
+
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location" required><br>
+
+                    <label for="user_ID">User ID</label>
+                    <input type="text" id="user_ID" name="user_ID" required><br>
+
+                    <input type="submit" value="Insert">
+                </form>
+            </div>
+
+            <div class = "delete">
+                <form action="/delete" method="POST">
+                    <h3>Delete</h3>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required><br>
+
+                    <label for="customer_id">ID:</label>
+                    <input type="text" id="customer_id" name="customer_id" required><br>
+
+                    <input type="submit" value="Delete">
+                </form>
+            </div>
+
+            <div class = "update">
+                <form action="/update" method="POST">
+                    <h3>Update</h3>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required><br>
+
+                    <label for="ID">ID:</label>
+                    <input type="text" id="ID" name="ID" required><br>
+
+                    <label for="new_location">New Location:</label>
+                    <input type="text" id="new_location" name="new_location" required><br>
+
+
+                    <input type="submit" value="update">
+                </form>
+            </div>
+        </div>
+
+        <div class="customers_info">
+
+            <form action="/CustomersInfo">
+                <input type="submit" value="Show Customers Info" />
+            </form>
+            
+        <div>
+    </div>
+
+    
+    
+</body>
+</html>
+

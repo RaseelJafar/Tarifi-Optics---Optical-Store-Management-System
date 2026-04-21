@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Out-of-Stock Products{% endblock %}
+
+{% block content %}
+  <style>
+    .filter-bar {
+      max-width: 600px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .filter-bar select,
+    .filter-bar button {
+      padding: 0.5rem 1rem;
+      margin-right: 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .stock-table {
+      width: 100%;
+      max-width: 800px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    .stock-table th,
+    .stock-table td {
+      border: 1px solid #333;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .stock-table th {
+      background: #727171;
+      color: #fff;
+    }
+    .stat-card {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #fff;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+  </style>
+
+  <h1>📦 Out-of-Stock Products</h1>
+
+  <div class="filter-bar">
+    <form method="get" action="{{ url_for('stat_out_of_stock') }}">
+      <label for="branch_id">Branch:</label>
+      <select name="branch_id" id="branch_id">
+        <option value="" {% if not selected_branch %}selected{% endif %}>&mdash; All Branches &mdash;</option>
+        {% for bid, loc in all_branches %}
+          <option value="{{ bid }}" {% if bid == selected_branch %}selected{% endif %}>
+            {{ loc }} (ID {{ bid }})
+          </option>
+        {% endfor %}
+      </select>
+      <button type="submit">Filter</button>
+    </form>
+  </div>
+
+  {% if out_of_stock %}
+    <div class="stat-card">
+      <p>
+        Found <strong>{{ out_of_stock|length }}</strong> product{{ out_of_stock|length != 1 and 's' or '' }}
+        out of stock
+        {% if selected_branch %}in branch {{ selected_branch }}{% endif %}.
+      </p>
+    </div>
+
+    <table class="stock-table">
+      <thead>
+        <tr>
+          <th>Branch ID</th>
+          <th>Product ID</th>
+          <th>Product Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for bid, pid, ptype in out_of_stock %}
+        <tr>
+          <td>{{ bid }}</td>
+          <td>{{ pid }}</td>
+          <td>{{ ptype }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="stat-card">
+      <p>No out-of-stock products{% if selected_branch %} in branch {{ selected_branch }}{% endif %}.</p>
+    </div>
+  {% endif %}
+{% endblock %}

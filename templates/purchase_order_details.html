@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Purchase Order Details{% endblock %}
+{% block content %}
+<h1>📋 Purchase Order #{{ order_id }}</h1>
+
+<a href="{{ url_for('purchase_orders') }}" class="btn btn-secondary">← Back to Purchase Orders</a>
+
+<br><br>
+
+{% if details %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Cost per Unit</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set total = 0 %}
+        {% for detail in details %}
+        <tr>
+            <td>{{ detail[0] }}</td>
+            <td>{{ detail[1] }}</td>
+            <td>${{ "%.2f"|format(detail[2]) }}</td>
+            <td>${{ "%.2f"|format(detail[3]) }}</td>
+            {% set total = total + detail[3] %}
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+{% else %}
+<div class="alert alert-warning">
+    <strong>No details found for this purchase order.</strong>
+</div>
+{% endif %}
+
+{% endblock %}

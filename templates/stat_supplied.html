@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Products Supplied by Supplier{% endblock %}
+
+{% block content %}
+  <style>
+    .filter-bar {
+      max-width: 600px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .filter-bar select,
+    .filter-bar button {
+      padding: 0.5rem 1rem;
+      margin-right: 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .summary-table,
+    .details-table {
+      width: 100%;
+      max-width: 800px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    .summary-table th,
+    .summary-table td,
+    .details-table th,
+    .details-table td {
+      border: 1px solid #333;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .summary-table th,
+    .details-table th {
+      background: #727171;
+      color: #fff;
+    }
+    .stat-card {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #fff;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+  </style>
+
+  <h1>📦 Supply by Supplier</h1>
+
+  <div class="filter-bar">
+    <form method="get" action="{{ url_for('stat_supplied') }}">
+      <label for="supplier_id">Supplier:</label>
+      <select name="supplier_id" id="supplier_id">
+        <option value="" {% if not selected_supplier %}selected{% endif %}>&mdash; All Suppliers &mdash;</option>
+        {% for sid, name in all_suppliers %}
+          <option value="{{ sid }}" {% if sid==selected_supplier %}selected{% endif %}>
+            {{ name }} (ID {{ sid }})
+          </option>
+        {% endfor %}
+      </select>
+      <button type="submit">Filter</button>
+    </form>
+  </div>
+
+  <!-- Summary Table -->
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>Supplier ID</th>
+        <th>Name</th>
+        <th>Total Quantity Supplied</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sid, name, total in summary %}
+      <tr>
+        <td>{{ sid }}</td>
+        <td>{{ name }}</td>
+        <td>{{ total }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if selected_supplier %}
+    <div class="stat-card">
+      <p>
+        Products supplied by supplier <strong>{{ selected_supplier }}</strong>:
+      </p>
+    </div>
+
+    {% if details %}
+      <table class="details-table">
+        <thead>
+          <tr>
+            <th>Product ID</th>
+            <th>Type</th>
+            <th>Quantity</th>
+            <th>Cost/Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pid, ptype, qty, cost in details %}
+          <tr>
+            <td>{{ pid }}</td>
+            <td>{{ ptype }}</td>
+            <td>{{ qty }}</td>
+            <td>{{ cost }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p style="text-align:center; color:#777; margin-top:2rem;">
+        No products found for this supplier.
+      </p>
+    {% endif %}
+  {% endif %}
+{% endblock %}

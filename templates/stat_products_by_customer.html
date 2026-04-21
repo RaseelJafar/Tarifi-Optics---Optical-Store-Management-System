@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Products by Customer{% endblock %}
+
+{% block content %}
+  <style>
+    .filter-bar {
+      max-width: 700px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .filter-bar select,
+    .filter-bar input[type="month"],
+    .filter-bar button {
+      padding: 0.5rem 1rem;
+      margin-right: 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .products-table {
+      width: 100%;
+      max-width: 900px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    .products-table th,
+    .products-table td {
+      border: 1px solid #333;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .products-table th {
+      background: #727171;
+      color: #fff;
+    }
+    .stat-card {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #fff;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+  </style>
+
+  <h1>🛒 Products Purchased by Customer</h1>
+
+  <div class="filter-bar">
+    <form method="get" action="{{ url_for('stat_products_by_customer') }}">
+      <label for="customer_id">Customer:</label>
+      <select id="customer_id" name="customer_id">
+        <option value="" {% if not selected_customer %}selected{% endif %}>&mdash; All Customers &mdash;</option>
+        {% for cid, cname in all_customers %}
+          <option value="{{ cid }}" {% if cid==selected_customer %}selected{% endif %}>
+            {{ cname }} (ID {{ cid }})
+          </option>
+        {% endfor %}
+      </select>
+
+      <label for="period">Month:</label>
+      <input
+        type="month"
+        id="period"
+        name="period"
+        value="{{ selected_period }}"
+      />
+
+      <button type="submit">Filter</button>
+    </form>
+  </div>
+
+  {% if products %}
+    <div class="stat-card">
+      <p>
+        Showing {{ products|length }} product{{ products|length != 1 and 's' or '' }}
+        {% if selected_period %}in {{ selected_period }}{% endif %}
+        {% if selected_customer %}for customer {{ selected_customer }}{% endif %}.
+      </p>
+    </div>
+
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th>Product ID</th>
+          <th>Type</th>
+          <th>Total Quantity</th>
+          <th>Total Spent (USD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pid, ptype, qty, spent in products %}
+        <tr>
+          <td>{{ pid }}</td>
+          <td>{{ ptype }}</td>
+          <td>{{ qty }}</td>
+          <td>{{ spent }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="stat-card">
+      <p>No purchases found for the selected filters.</p>
+    </div>
+  {% endif %}
+{% endblock %}

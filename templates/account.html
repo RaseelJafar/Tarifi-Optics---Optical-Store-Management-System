@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Tarifi Optics</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+
+        .account-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2.5em;
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: white;
+            margin: 0 auto 20px;
+        }
+
+        .user-type-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .user-info h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1em;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .stats-section {
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #333;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        @media (max-width: 768px) {
+            .account-container {
+                padding: 20px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="account-container">
+        <div class="header">
+            <h1>My Account</h1>
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <h2>Welcome, {{session.get('username')}} !</h2>
+
+        </div>
+
+        <div class="user-info">
+            <h2><i class="fas fa-info-circle"></i> Account Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value">{{session.get('username')}} </div>
+                    </div>
+                </div>
+
+                {% if phone %}
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Phone Number</div>
+                        <div class="info-value">{{ phone }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if email %}
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{ email }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if location %}
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Location</div>
+                        <div class="info-value">{{ location }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if work_location %}
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Work Location</div>
+                        <div class="info-value">{{ work_location }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if date_of_birth %}
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Date of Birth</div>
+                        <div class="info-value">{{ date_of_birth }}</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if user_type == 'customer' and (total_orders is defined or total_spent is defined) %}
+        <div class="stats-section">
+            <div class="stats-grid">
+                {% if total_orders is defined %}
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_orders }}</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                {% endif %}
+                {% if total_spent is defined %}
+                <div class="stat-card">
+                    <div class="stat-number">${{ "%.2f"|format(total_spent) }}</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user_type == 'employee' and salary is defined %}
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">${{ "%.2f"|format(salary) }}</div>
+                    <div class="stat-label">Monthly Salary</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user_type == 'owner' and ownership_percentage is defined %}
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ "%.1f"|format(ownership_percentage) }}%</div>
+                    <div class="stat-label">Ownership</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                <i class="fas fa-home"></i> Home
+            </a>
+            
+            {% if user_type == 'customer' %}
+            <a href="{{ url_for('order_history') }}" class="btn">
+                <i class="fas fa-shopping-bag"></i> Order History
+            </a>
+            {% endif %}
+            
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+</body>
+</html>

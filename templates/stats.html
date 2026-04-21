@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Statistics Dashboard{% endblock %}
+
+{% block content %}
+<style>
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .stats-card {
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 1.2rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform .15s ease, box-shadow .15s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+  .stats-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  .stats-card h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+  }
+  .stats-card p {
+    margin: .5rem 0 0;
+    color: #666;
+    font-size: .9rem;
+  }
+</style>
+
+<h1>📊 Statistics Dashboard</h1>
+
+<div class="stats-grid">
+  <a class="stats-card" href="{{ url_for('stat_total_branches') }}">
+    <h3>1. Total Branches</h3>
+    <p>View overall branch count</p>
+  </a>
+  <a class="stats-card"
+   href="{{ url_for('stat_branches_by_city', city='Ramallah') }}">
+  <h3>2. Branches by City</h3>
+  <p>Filter branches by location</p>
+</a>
+
+  <a class="stats-card" href="{{ url_for('stat_branch_managers') }}">
+    <h3>3. Branch Managers</h3>
+    <p>Who manages each branch</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_employees_per_branch') }}">
+    <h3>4. Employees per Branch</h3>
+    <p>Headcount by branch</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_products') }}">
+    <h3>5. Products in Branch</h3>
+    <p>Inventory per branch</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_product_quantity') }}">
+    <h3>6. Product Quantity</h3>
+    <p>Qty in one branch &amp; all</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_orders_by_customer') }}">
+    <h3>7. Orders by Customer</h3>
+    <p>Total orders per customer</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_exams_by_customer') }}">
+    <h3>8. Exams by Customer</h3>
+    <p>Which tests a customer took</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_orders_per_day') }}">
+    <h3>9. Orders per Day</h3>
+    <p>Daily order volume</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_earnings') }}">
+    <h3>10. Earnings Over Time</h3>
+    <p>Monthly &amp; yearly revenue</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_best_sellers') }}">
+    <h3>11. Best Sellers</h3>
+    <p>Top products per branch &amp; overall</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_insurance_coverage') }}">
+    <h3>12. Insurance Coverage</h3>
+    <p>Fully / 50% / &lt;50%</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_top_customers') }}">
+    <h3>13. Top 5 Customers</h3>
+    <p>By branch based on spending</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_highest_purchase') }}">
+    <h3>14. Highest Order</h3>
+    <p>Single largest purchase per customer</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_products_by_customer') }}">
+    <h3>15. Customer Purchased Products</h3>
+    <p>Products purchased by customer</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_out_of_stock') }}">
+    <h3>16. Out of Stock</h3>
+    <p>Which items hit zero stock</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_users') }}">
+    <h3>17. Total Users</h3>
+    <p>Registered website users</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_available_products') }}">
+    <h3>18. Available Products by type</h3>
+    <p>Optical, sunglasses, Lenses &amp; Accessories</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_supplied') }}">
+    <h3>19. Supplier Counts</h3>
+    <p>How many orders per supplier</p>
+  </a>
+  <a class="stats-card" href="{{ url_for('stat_restock') }}">
+    <h3>20. Restock Needed</h3>
+    <p>Products below threshold</p>
+  </a>
+</div>
+{% endblock %}

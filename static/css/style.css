@@ -1,0 +1,275 @@
+/* ─────────────────────────────────────────────────────────────────────────── */
+/*                   UPDATED “Beautiful” Admin UI CSS                            */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #f0f2f5;
+  color: #2c3e50;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* ─── Container Layout ───────────────────────────────────────────────────────── */
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ─── Sidebar ───────────────────────────────────────────────────────────────── */
+.sidebar {
+  width: 240px;
+  background: #34495e;
+  color: #ecf0f1;
+  padding: 1.5rem 1rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1.2rem;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.sidebar nav ul {
+  list-style: none;
+}
+
+.sidebar nav li {
+  margin-bottom: 1rem;
+}
+
+.sidebar nav a {
+  color: #ecf0f1;
+  text-decoration: none;
+  padding: 0.6rem 1rem;
+  display: block;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.sidebar nav a:hover {
+  background: #3d5a73;
+}
+
+/* ─── Main Content ───────────────────────────────────────────────────────────── */
+.content {
+  flex-grow: 1;
+  padding: 2rem 2.5rem;
+  background: #f0f2f5;
+}
+
+/* Flash Messages */
+.flash-container {
+  margin-bottom: 1.5rem;
+}
+
+.flash {
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.flash-success {
+  background: #27ae60;
+  color: #fff;
+}
+
+.flash-error {
+  background: #c0392b;
+  color: #fff;
+}
+
+/* ─── Card Component ─────────────────────────────────────────────────────────── */
+.card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 1.8rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.card h2 {
+  margin-bottom: 1.2rem;
+  color: #2c3e50;
+  font-size: 1.25rem;
+}
+
+/* ─── Form Elements ─────────────────────────────────────────────────────────── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #2980b9;
+  box-shadow: 0 0 4px rgba(41, 128, 185, 0.2);
+  outline: none;
+}
+
+/* Buttons */
+button {
+  background: #2980b9;
+  color: #fff;
+  border: none;
+  padding: 0.65rem 1.3rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+  background: #1f618d;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button.danger {
+  background: #c0392b;
+}
+
+button.danger:hover {
+  background: #a93226;
+}
+
+/* ─── Tables ───────────────────────────────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.2rem;
+}
+
+table thead {
+  background: #2980b9;
+  color: #fff;
+}
+
+table th,
+table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ecf0f1;
+  font-size: 0.95rem;
+}
+
+table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+table th:first-child,
+table td:first-child {
+  padding-left: 1.5rem;
+}
+
+table th:last-child,
+table td:last-child {
+  padding-right: 1.5rem;
+}
+
+/* ─── Inline Action Buttons & Forms ─────────────────────────────────────────── */
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.inline-form {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+
+.inline-form input,
+.inline-form select {
+  width: auto;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.9rem;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inline-form input:focus,
+.inline-form select:focus {
+  border-color: #2980b9;
+  box-shadow: 0 0 4px rgba(41, 128, 185, 0.2);
+  outline: none;
+}
+
+.inline-form button {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Hide-edit forms by default */
+.hidden {
+  display: none !important;
+}
+
+/* Smaller button text */
+.small {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+  .container {
+    flex-direction: column;
+  }
+  .content {
+    padding: 1rem;
+  }
+  table th,
+  table td {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
+  .card {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */

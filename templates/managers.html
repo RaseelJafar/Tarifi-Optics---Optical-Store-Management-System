@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}Manage Managers{% endblock %}
+{% block content %}
+  <h1>👤 Managers</h1>
+
+  <!-- ── Create New Manager Card ────────────────────────────────────── -->
+  <div class="card">
+    <h2>➕ Create New Manager Account</h2>
+
+    {% if message %}
+      <div class="flash flash-error" style="margin-bottom: 1rem;">
+        {{ message }}
+      </div>
+    {% endif %}
+    {% if success %}
+      <div class="flash flash-success" style="margin-bottom: 1rem;">
+        {{ success }}
+      </div>
+    {% endif %}
+
+    <form action="{{ url_for('managers') }}" method="post">
+      <div class="form-group">
+        <label for="userid">User ID</label>
+        <input
+          type="text"
+          id="userid"
+          name="userid"
+          placeholder="e.g. 1210478"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="At least 8 chars, one uppercase, one digit"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">Confirm Password</label>
+        <input
+          type="password"
+          id="confirm_password"
+          name="confirm_password"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="e.g. Mohammed Saada"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="e.g. Mohammed@example.com"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="dob">Date of Birth</label>
+        <input type="date" id="dob" name="dob" required />
+      </div>
+
+      <div class="form-group">
+        <label for="salary">Salary (USD)</label>
+        <input
+          type="number"
+          id="salary"
+          name="salary"
+          min="300"
+          placeholder="Minimum 300"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="branch">Branch</label>
+        <select id="branch" name="branch" required>
+          <option value="">— Select Branch —</option>
+          {% for (bid, loc) in branches %}
+            <option value="{{ bid }}">{{ loc }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit">✔️ Create Account</button>
+    </form>
+  </div>
+  <!-- ──────────────────────────────────────────────────────────────── -->
+
+  <!-- ── Existing Managers Table ────────────────────────────────────── -->
+  <div class="card" style="margin-top: 2rem;">
+    <h2>👥 Existing Managers</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>DOB</th>
+          <th>Salary</th>
+          <th>Branch</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for emp in managers %}
+        <tr>
+          <td>{{ emp[0] }}</td>
+          <td>{{ emp[1] }}</td>
+          <td>{{ emp[2] }}</td>
+          <td>{{ emp[3] }}</td>
+          <td>{{ emp[4] }}</td>
+          <td>{{ emp[5] or "—" }}</td>
+          <td class="actions">
+            <!-- Toggle inline Edit form -->
+            <button
+              class="btn small"
+              onclick="document.getElementById('edit-{{ emp[0] }}').classList.toggle('hidden')"
+            >
+              ✏️ Edit
+            </button>
+
+            <form
+              id="edit-{{ emp[0] }}"
+              class="hidden inline-form"
+              action="{{ url_for('edit_manager', emp_id=emp[0]) }}"
+              method="post"
+            >
+              <input
+                type="number"
+                name="salary"
+                min="300"
+                value="{{ emp[4] }}"
+                required
+              />
+              <select name="manage_branch" required>
+                <option value="">— Select Branch —</option>
+                {% for (bid, loc) in branches %}
+                  <option value="{{ bid }}" {% if loc == emp[5] %}selected{% endif %}>
+                    {{ loc }}
+                  </option>
+                {% endfor %}
+              </select>
+              <button type="submit">✔️</button>
+            </form>
+
+            <!-- Delete -->
+            <form
+              class="inline-form"
+              action="{{ url_for('delete_manager', emp_id=emp[0]) }}"
+              method="post"
+            >
+              <button type="submit" class="btn danger">🗑️ Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- ──────────────────────────────────────────────────────────────── -->
+{% endblock %}

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--font-family-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@400..700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Quicksand:wght@300..700&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    
+    <!--CSS -->
+    <link rel="stylesheet" href="../static/css/main.css" /> 
+    <link rel="stylesheet" href="../static/css/account_icon.css" /> 
+
+
+    <!--fontawesome.min.css-->
+    <link rel="stylesheet" href="../static/css/fontawesome.min.css">
+
+    <!--fontawesome.min.css-->
+    <link rel="stylesheet" href="../static/css/fontawesome.css">
+
+    <link rel="stylesheet" href="../static/css/all.css">
+
+
+
+    <!--responsive.css-->
+    <link rel="stylesheet" href="../static/css/responsive.css">
+
+    <title>Tarifi Optics</title>
+</head>
+<body>
+        <section class="Home" id="Home">
+            <!-- Navbar -->
+            <nav>
+                <div class="container">
+                
+                        <div class="logo"> <img src="../static/images/logo.png" alt="Tarifi Optics logo" />  </div>
+                    
+                        <div class="Navlist">
+                            
+                            <ul>
+
+                                <li> <a href="#Home"> Home </a></li>
+
+                                {% if session.get('user_type') == 'owner' %}
+                                <li><a href="{{ url_for('base') }}">Owner Dashboard</a></li>
+
+                                {% elif session.get('user_type') == 'employee' %}
+                                <li><a href="{{ url_for('base') }}">Employee Dashboard</a></li>
+
+                                {% elif session.get('user_type') == 'manager' %}
+                                <li><a href="{{ url_for('base') }}">Manager Dashboard</a></li>
+
+                                {% elif user_type == 'customer' %}
+                                    <li> <a href="{{ url_for('order_history') }}">My Order History</a></li> 
+                            
+                                {% else %}
+                                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                                {% endif %}
+                                <li> <a href="#Products"> Products </a></li>
+                                <li> <a href="#Contact"> Contact </a></li>
+
+                                {% if user_type %}
+                                <li class="account-dropdown">
+                                <div class="account-icon">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <ul class="dropdown-content">
+                                    <li><a href="{{ url_for('account') }}">Account</a></li>
+                                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                                </ul>
+                                </li>
+                                {% endif %}
+                            </ul>
+
+
+                        </div>
+                    
+                </div>
+            </nav>
+
+            <div class="welcome">
+                <video loop muted autoplay plays-inline src="../static/videos/welcome.mp4" class="back">
+                    <source src="videos/welcome.mp4" type="video/mp4">
+                </video>
+
+                <div class="welcome-content">
+                    <h1>Clear Vision, Better Life</h1>
+                    <p>Discover premium eyewear and expert optical services at Tarifi Optics. Your vision is our mission since 1998.</p>
+                    <div class="cta-buttons">
+                        <a href="#Products" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Product Categories Section -->
+        <section class="categories-section" id="Products">
+            <h2 class="section-title">Shop by Category</h2>
+            <div class="categories-grid">
+                
+                <a class="category-card" href="{{ url_for('products') }}?type=optical_glasses">
+                    <div class="category-icon">
+                        <i class="fas fa-glasses"></i>
+                    </div>
+                    <h3>Eyeglasses</h3>
+                    <p>Prescription glasses in the latest styles and premium materials</p>
+                    <div class="btn btn-primary">Shop Eyeglasses</div>
+                </a>
+
+                <a class="category-card" href="{{ url_for('products') }}?type=sunglasses">
+                    <div class="category-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <h3>Sunglasses</h3>
+                    <p>UV protection and style combined in our designer sunglasses collection</p>
+                    <div class="btn btn-primary">Shop Sunglasses</div>
+                </a>
+
+                <a class="category-card" href="{{ url_for('products') }}?type=lenses">
+                    <div class="category-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Contact Lenses</h3>
+                    <p>Daily, weekly, and monthly contact lenses from trusted brands</p>
+                    <div class="btn btn-primary">Shop Lenses</div>
+                </a>
+
+                <a class="category-card" href="{{ url_for('products') }}?type=accessories">
+                    <div class="category-icon">
+                        <i class="fas fa-toolbox"></i>
+                    </div>
+                    <h3>Accessories</h3>
+                    <p>Cases, cleaning kits, chains, and other eyewear accessories</p>
+                    <div class="btn btn-primary">Shop Accessories</div>
+                </a>
+                
+            </div>
+        </section>
+
+    
+
+        <!-- Best Sellers Section -->
+        <section class="bestsellers-section">
+            <div class="products-container">
+                <h2 class="section-title">Best Sellers</h2>
+                 {% if best_sellers %}
+                <div class="products-grid">
+                    {% for product in best_sellers %}
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}"/>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fa fa-star star"></i>
+                            <i class="fa fa-star star"></i>
+                            <i class="fa fa-star star"></i>
+                            <i class="fa fa-star star"></i>
+                            <i class="fa fa-star star"></i>
+                            <span>Sold: {{ product.total_sold }}</span>
+                        </div>
+                        <div class="product-price">${{ product.price }}</div>
+                        <div class="product-name">{{ product.name }}</div>
+                        <div class="btn btn-primary">Shop Now</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                    <a href="{{ url_for('product_statistics') }}" class="btn btn-outline-primary">
+                        📈 Product Statistics
+                    </a>
+
+                {% else %}
+                    <p>No best sellers found.</p>
+                {% endif %}
+            </div>
+        </section>
+
+
+
+        <!-- Services Section -->
+        <section class="services-section">
+            <div class="services-container">
+                <h2 class="section-title">Our Services</h2>
+                
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-regular fa-eye"></i>
+                        </div>
+                        <h4>Eye Examinations</h4>
+                        <p>Comprehensive eye exams by qualified optometrists using the latest diagnostic equipment to ensure your vision health.</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa fa-wrench" ></i>
+                        </div>
+                        <h4>Frame Fitting & Adjustment</h4>
+                        <p>Professional frame fitting and adjustment services to ensure your glasses fit perfectly and comfortably.</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa fa-truck" ></i>
+                        </div>
+                        <h4>Fast Shipping</h4>
+                        <p>Quick and accurate lens replacement services with same-day availability for most prescriptions.</p>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </section>
+
+    <footer id="Contact">
+        <div class="footer-container" >
+
+             <div class="footer-section intro">
+                <h2>Tarifi Optics</h2>
+                <p>We are a leading optical store offering quality eyewear and expert services since 1998. Your vision is our mission.</p>
+            </div>
+
+            <div class="footer-section about">
+                <h3>About Us</h3>
+                <ul>
+                    <li>Our Story</li>
+                    <li>Vision & Mission</li>
+                    <li>Why Choose Us?</li>
+                    <li>+(970)599888776</li>
+                    <li>tarifi@gmail.com</li>
+                </ul>
+            </div>
+
+            <div class="footer-section branches">
+                <h3>Our Branches</h3>
+                <ul>
+                    {% for location, phone in our_branches %}
+                    <li>{{ location }} — {{ phone }}</li>
+                    {% endfor %}
+                </ul>
+                </div>
+
+
+            <div class="footer-section links">
+                <h3>Products</h3>
+                <ul>
+                    <li><a href="#Products">Eyeglasses</a></li>
+                    <li><a href="#Products">Sunglasses</a></li>
+                    <li><a href="#Products">Lenses</a></li>
+                    <li><a href="#Products">Accessories</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 Optical Store. All rights reserved.
+    
+            <div class="col-sm-6">
+                <div class="footer-social">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>	
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+</body>
+</html>

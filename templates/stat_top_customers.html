@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Top 5 Customers{% endblock %}
+
+{% block content %}
+  <style>
+    .filter-bar {
+      max-width: 700px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .filter-bar select,
+    .filter-bar input[type="month"],
+    .filter-bar button {
+      padding: 0.5rem 1rem;
+      margin-right: 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .customers-table {
+      width: 100%;
+      max-width: 900px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    .customers-table th,
+    .customers-table td {
+      border: 1px solid #333;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .customers-table th {
+      background: #727171;
+      color: #fff;
+    }
+    .stat-card {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #fff;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+  </style>
+
+  <h1>🏅 Top 5 Customers by Spending</h1>
+
+  <div class="filter-bar">
+    <form method="get" action="{{ url_for('stat_top_customers') }}">
+      <label for="branch_id">Branch:</label>
+      <select name="branch_id" id="branch_id">
+        <option value="" {% if not selected_branch %}selected{% endif %}>&mdash; All Branches &mdash;</option>
+        {% for bid, loc in all_branches %}
+          <option value="{{ bid }}" {% if bid == selected_branch %}selected{% endif %}>
+            {{ loc }} (ID {{ bid }})
+          </option>
+        {% endfor %}
+      </select>
+
+      <label for="period">Month:</label>
+      <input
+        type="month"
+        id="period"
+        name="period"
+        value="{{ selected_period }}"
+      />
+
+      <button type="submit">Filter</button>
+    </form>
+  </div>
+
+  {% if top_customers %}
+    <table class="customers-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Customer ID</th>
+          <th>Name</th>
+          <th>Total Spent (USD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cid, name, spent in top_customers %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ cid }}</td>
+          <td>{{ name }}</td>
+          <td>{{ spent | round(2) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="stat-card">
+      <p>No spending data match the selected filters.</p>
+    </div>
+  {% endif %}
+{% endblock %}

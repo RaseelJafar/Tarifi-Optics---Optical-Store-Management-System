@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .checkout-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .checkout-header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .checkout-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .checkout-form {
+            display: grid;
+            gap: 25px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .order-summary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .summary-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding-top: 15px;
+            margin-top: 10px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(108, 117, 125, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h1> Checkout</h1>
+            <p>Complete your order details</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <a href="{{ url_for('view_cart') }}" class="back-btn">← Back to Cart</a>
+
+        <form action="{{ url_for('process_order') }}" method="POST" class="checkout-form">
+            <!-- Customer Information -->
+            <div class="form-section">
+                <h3 class="section-title">Customer Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customer_name">Full Name *</label>
+                        <input type="text" id="customer_name" name="customer_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer_phone">Phone Number *</label>
+                        <input type="tel" id="customer_phone" name="customer_phone" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="customer_email">Email Address</label>
+                    <input type="email" id="customer_email" name="customer_email">
+                </div>
+            </div>
+
+            <!-- Delivery & Payment -->
+            <div class="form-section">
+                <h3 class="section-title">Delivery & Payment</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="branch_id">Pickup Branch *</label>
+                        <select id="branch_id" name="branch_id" required>
+                            <option value="">Select a branch</option>
+                            {% for branch in branches %}
+                                <option value="{{ branch[0] }}">{{ branch[1] }} - {{ branch[2] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment_method">Payment Method *</label>
+                        <select id="payment_method" name="payment_method" required>
+                            <option value="">Select payment method</option>
+                            {% for method in payment_methods %}
+                                <option value="{{ method[0] }}">{{ method[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <select name="insurance">
+                        <option value="">No Insurance</option>
+                        <option value="HealthInsurance">HealthInsurance</option>
+                        <option value="PrivateCare">PrivateCare</option>
+                        <option value="Medicare">Medicare</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h3 class="summary-title">Order Summary</h3>
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span>${{ "%.2f"|format(total) }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Tax & Fees:</span>
+                    <span>$0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Total Amount:</span>
+                    <span>${{ "%.2f"|format(total) }}</span>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                🛒 Place Order - ${{ "%.2f"|format(total) }}
+            </button>
+        </form>
+    </div>
+</body>
+</html>

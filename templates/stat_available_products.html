@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Available Products{% endblock %}
+
+{% block content %}
+  <style>
+    .filter-bar {
+      max-width: 700px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .filter-bar select,
+    .filter-bar button {
+      padding: 0.5rem 1rem;
+      margin-right: 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .stat-card {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #fff;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .prod-table {
+      width: 100%;
+      max-width: 800px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    .prod-table th,
+    .prod-table td {
+      border: 1px solid #333;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .prod-table th {
+      background: #727171;
+      color: #fff;
+    }
+  </style>
+
+  <h1>📦 Available Products</h1>
+
+  <div class="filter-bar">
+    <form method="get" action="{{ url_for('stat_available_products') }}">
+      <label for="branch_id">Branch:</label>
+      <select name="branch_id" id="branch_id">
+        <option value="" {% if not selected_branch %}selected{% endif %}>&mdash; All Branches &mdash;</option>
+        {% for bid, loc in all_branches %}
+          <option value="{{ bid }}" {% if bid == selected_branch %}selected{% endif %}>
+            {{ loc }} (ID {{ bid }})
+          </option>
+        {% endfor %}
+      </select>
+
+      <label for="product_type">Product Type:</label>
+      <select name="product_type" id="product_type">
+        <option value="" {% if not selected_type %}selected{% endif %}>&mdash; All Types &mdash;</option>
+        {% for t in product_types %}
+          <option value="{{ t }}" {% if t == selected_type %}selected{% endif %}>
+            {{ t }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <button type="submit">Filter</button>
+    </form>
+  </div>
+
+  <div class="stat-card">
+    <p>
+      Found <strong>{{ total_available }}</strong> product{{ total_available != 1 and 's' or '' }}
+      available
+      {% if selected_branch %}in branch <strong>{{ selected_branch }}</strong>{% endif %}
+      {% if selected_type %} of type <strong>{{ selected_type }}</strong>{% endif %}.
+    </p>
+  </div>
+
+  {% if products %}
+    <table class="prod-table">
+      <thead>
+        <tr>
+          <th>Branch ID</th>
+          <th>Product ID</th>
+          <th>Type</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for bid, pid, ptype, qty in products %}
+        <tr>
+          <td>{{ bid }}</td>
+          <td>{{ pid }}</td>
+          <td>{{ ptype }}</td>
+          <td>{{ qty }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="text-align:center; color:#777; margin-top:2rem;">
+      No products available
+      {% if selected_branch %} in branch {{ selected_branch }}{% endif %}
+      {% if selected_type %} of type {{ selected_type }}{% endif %}.
+    </p>
+  {% endif %}
+{% endblock %}

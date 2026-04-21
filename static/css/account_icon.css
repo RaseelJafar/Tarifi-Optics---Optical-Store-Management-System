@@ -1,0 +1,57 @@
+.account-dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.account-icon {
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+}
+
+.account-dropdown:hover .dropdown-content {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    pointer-events: auto;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%; /* drop below the icon */
+    right: 0;
+    background-color: white;
+    min-width: 140px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 8px;
+    padding: 0;
+    margin-top: 8px;
+    pointer-events: none; /* prevent flickering on hover */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+}
+
+.dropdown-content li {
+    list-style: none;
+    padding: 10px 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown-content li:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content li a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content li a:hover {
+    background-color: #f0f0f0;
+}

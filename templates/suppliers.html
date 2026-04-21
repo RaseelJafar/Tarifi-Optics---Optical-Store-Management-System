@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Suppliers{% endblock %}
+{% block content %}
+  <h1>🚚 Suppliers</h1>
+
+  <div class="card">
+    <h2>Add New Supplier</h2>
+    <form action="{{ url_for('add_supplier') }}" method="post">
+      <!-- ───── New “Supplier ID” field ───────────────────────────────────── -->
+      <div class="form-group">
+        <label for="id">Supplier ID</label>
+        <input
+          type="number"
+          id="id"
+          name="id"
+          placeholder="e.g. 200"
+          min="1"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="e.g. Mohammed Saada"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input
+          type="text"
+          id="phone"
+          name="phone"
+          placeholder="e.g. 0598400545"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="e.g. Mohammed@example.com"
+          required
+        />
+      </div>
+      <button type="submit">➕ Add Supplier</button>
+    </form>
+  </div>
+
+  <div class="card" style="margin-top: 1.5rem;">
+    <h2>Existing Suppliers</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for (sid, name, phone, email) in suppliers %}
+        <tr>
+          <td>{{ sid }}</td>
+          <td>{{ name }}</td>
+          <td>{{ phone }}</td>
+          <td>{{ email }}</td>
+          <td class="actions">
+            <button
+              class="btn small"
+              onclick="document.getElementById('edit-s-{{ sid }}').classList.toggle('hidden')"
+            >
+              ✏️ Edit
+            </button>
+            <form
+              id="edit-s-{{ sid }}"
+              class="hidden inline-form"
+              action="{{ url_for('edit_supplier', sp_id=sid) }}"
+              method="post"
+            >
+              <input type="text" name="name" value="{{ name }}" required/>
+              <input type="text" name="phone" value="{{ phone }}" required/>
+              <input type="email" name="email" value="{{ email }}" required/>
+              <button type="submit">✔️</button>
+            </form>
+
+            <form
+              class="inline-form"
+              action="{{ url_for('delete_supplier', sp_id=sid) }}"
+              method="post"
+            >
+              <button type="submit" class="btn danger">🗑️ Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

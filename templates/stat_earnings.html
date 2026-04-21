@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Company Earnings{% endblock %}
+
+{% block content %}
+<style>
+  .filter-bar {
+    max-width: 700px;
+    margin: 1.5rem auto;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .filter-bar select,
+  .filter-bar input[type="month"],
+  .filter-bar button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-right: 1rem;
+  }
+  .cards {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 2rem auto;
+    max-width: 800px;
+  }
+  .earn-card {
+    flex: 1 1 200px;
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .earn-card h3 { margin-bottom: .5rem; color: #333; }
+  .earn-card p  { font-size: 1.2rem; color: #555; }
+  .details-table {
+    width: 100%;
+    max-width: 500px;
+    margin: 2rem auto;
+    border-collapse: collapse;
+  }
+  .details-table th,
+  .details-table td {
+    border: 1px solid #333;
+    padding: 0.75rem;
+    text-align: left;
+  }
+  .details-table th { background: #727171; }
+  #earningsChart {
+    max-width: 800px;
+    margin: 2rem auto;
+    display: block;
+  }
+</style>
+
+<h1>💰 Company Earnings</h1>
+
+<div class="filter-bar">
+  <form method="get" action="{{ url_for('stat_earnings') }}">
+    <label for="branch_id">Branch:</label>
+    <select name="branch_id" id="branch_id">
+      <option value="" {% if not selected_branch %}selected{% endif %}>&mdash; All Branches &mdash;</option>
+      {% for bid, loc in all_branches %}
+        <option value="{{ bid }}" {% if bid==selected_branch %}selected{% endif %}>
+          {{ loc }} (ID: {{ bid }})
+        </option>
+      {% endfor %}
+    </select>
+
+    <label for="period">Month:</label>
+    <input 
+      type="month" 
+      id="period" 
+      name="period" 
+      value="{{ selected_period or '' }}"
+    />
+
+    <button type="submit">Apply</button>
+  </form>
+</div>
+
+<div class="cards">
+  <div class="earn-card">
+    <h3>🗓️ Orders ({{ selected_period or 'All' }})</h3>
+    <p>{{ order_earn | round(2) }} USD</p>
+  </div>
+  <div class="earn-card">
+    <h3>🩺 Examinations ({{ selected_period or 'All' }})</h3>
+    <p>{{ exam_earn | round(2) }} USD</p>
+  </div>
+  <div class="earn-card">
+    <h3>📊 Total</h3>
+    <p>{{ total_earn | round(2) }} USD</p>
+  </div>
+</div>
+
+<table class="details-table">
+  <thead>
+    <tr><th>Type</th><th>Amount (USD)</th></tr>
+  </thead>
+  <tbody>
+    {% for row in details %}
+    <tr>
+      <td>{{ row.type }}</td>
+      <td>{{ row.amount | round(2) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<canvas id="earningsChart" width="800" height="400"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = {{ chart_labels | tojson }};
+  const data   = {{ chart_data   | tojson }};
+
+  new Chart(
+    document.getElementById('earningsChart').getContext('2d'),
+    {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Total Earnings (USD)',
+          data: data,
+          fill: false,
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { title: { display: true, text: 'Month' } },
+          y: { title: { display: true, text: 'Earnings (USD)' }, beginAtZero: true }
+        }
+      }
+    }
+  );
+</script>
+{% endblock %}

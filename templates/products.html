@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .filters {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-icon {
+            font-size: 4rem;
+            color: #bdc3c7;
+        }
+
+        .product-type-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(52, 152, 219, 0.9);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .product-type-badge.sunglasses {
+            background: rgba(241, 196, 15, 0.9);
+        }
+
+        .product-type-badge.optical_glasses {
+            background: rgba(155, 89, 182, 0.9);
+        }
+
+        .product-type-badge.accessories {
+            background: rgba(230, 126, 34, 0.9);
+        }
+
+        .product-type-badge.lenses {
+            background: rgba(46, 204, 113, 0.9);
+        }
+
+        .product-info {
+            padding: 25px;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .product-details {
+            margin-bottom: 15px;
+        }
+
+        .product-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .product-detail .label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .product-detail .value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+
+        .product-stock {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .in-stock {
+            color: #27ae60;
+        }
+
+        .low-stock {
+            color: #f39c12;
+        }
+
+        .out-of-stock {
+            color: #e74c3c;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-to-cart-form {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+        }
+
+        .quantity-input {
+            width: 60px;
+            padding: 8px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .add-to-cart-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .add-to-cart-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #21618c);
+            transform: translateY(-2px);
+        }
+
+        .add-to-cart-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .view-details-btn {
+            background: #34495e;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .view-details-btn:hover {
+            background: #2c3e50;
+            transform: translateY(-2px);
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .flash-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flash-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .no-products {
+            text-align: center;
+            padding: 60px 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            color: #7f8c8d;
+        }
+
+        .no-products-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .product-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('view_cart') }}">
+                     Cart ({{ session['cart'] | length if 'cart' in session else 0 }})
+                </a>
+            </li>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label for="type-filter">Product Type:</label>
+                <select id="type-filter" onchange="filterProducts()">
+                    <option value="">All Types</option>
+                    <option value="sunglasses">Sunglasses</option>
+                    <option value="optical_glasses">Optical Glasses</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="lenses">Lenses</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="price-filter">Price Range:</label>
+                <select id="price-filter" onchange="filterProducts()">
+                    <option value="">All Prices</option>
+                    <option value="0-50">$0 - $50</option>
+                    <option value="50-100">$50 - $100</option>
+                    <option value="100-200">$100 - $200</option>
+                    <option value="200+">$200+</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="stock-filter">Availability:</label>
+                <select id="stock-filter" onchange="filterProducts()">
+                    <option value="">All Items</option>
+                    <option value="in-stock">In Stock</option>
+                    <option value="low-stock">Low Stock</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="products-grid">
+            {% if products %}
+                {% for product in products %}
+                <div class="product-card" 
+                     data-type="{{ product.product_type }}" 
+                     data-price="{{ product.price }}"
+                     data-stock="{{ product.quantity }}">
+                    <div class="product-image">
+                        {% if product.image_path %}
+                            <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}">
+                        {% else %}
+                            {% if product.product_type == 'sunglasses' %}
+                                <span class="product-icon"></span>
+                            {% elif product.product_type == 'optical_glasses' %}
+                                <span class="product-icon"></span>
+                            {% elif product.product_type == 'accessories' %}
+                                <span class="product-icon"></span>
+                            {% elif product.product_type == 'lenses' %}
+                                <span class="product-icon"></span>
+                            {% else %}
+                                <span class="product-icon">👓</span>
+                            {% endif %}
+                        {% endif %}
+                        <div class="product-type-badge {{ product.product_type }}">
+                            {{ product.product_type.replace('_', ' ').title() }}
+                        </div>
+                    </div>
+
+                    <div class="product-info">
+                        <div class="product-name">
+                            {% if product.product_type == 'sunglasses' and product.company_name %}
+                                {{ product.company_name }} Sunglasses
+                            {% elif product.product_type == 'optical_glasses' %}
+                                {{ product.optical_type }} Glasses
+                            {% elif product.product_type == 'accessories' %}
+                                {{ product.type }} Accessory
+                            {% elif product.product_type == 'lenses' %}
+                                {{ product.color }} Lenses
+                            {% else %}
+                                Product #{{ product.product_id }}
+                            {% endif %}
+                        </div>
+
+                        <div class="product-details">
+                            <div class="product-detail">
+                                <span class="label">Product ID:</span>
+                                <span class="value">#{{ product.product_id }}</span>
+                            </div>
+                            
+                            {% if product.product_type == 'sunglasses' %}
+                                {% if product.color %}
+                                <div class="product-detail">
+                                    <span class="label">Color:</span>
+                                    <span class="value">{{ product.color }}</span>
+                                </div>
+                                {% endif %}
+                                {% if product.company_name %}
+                                <div class="product-detail">
+                                    <span class="label">Brand:</span>
+                                    <span class="value">{{ product.company_name }}</span>
+                                </div>
+                                {% endif %}
+                            {% elif product.product_type == 'optical_glasses' %}
+                                {% if product.optical_type %}
+                                <div class="product-detail">
+                                    <span class="label">Type:</span>
+                                    <span class="value">{{ product.optical_type }}</span>
+                                </div>
+                                {% endif %}
+                                {% if product.degree %}
+                                <div class="product-detail">
+                                    <span class="label">Degree:</span>
+                                    <span class="value">{{ product.degree }}°</span>
+                                </div>
+                                {% endif %}
+                            {% elif product.product_type == 'accessories' %}
+                                {% if product.type %}
+                                <div class="product-detail">
+                                    <span class="label">Type:</span>
+                                    <span class="value">{{ product.type }}</span>
+                                </div>
+                                {% endif %}
+                            {% elif product.product_type == 'lenses' %}
+                                {% if product.color %}
+                                <div class="product-detail">
+                                    <span class="label">Color:</span>
+                                    <span class="value">{{ product.color }}</span>
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+
+                        <div class="product-price">${{ "%.2f"|format(product.price) }}</div>
+
+                        <div class="product-stock">
+                            {% if product.quantity > 10 %}
+                                <span class="in-stock"> In Stock ({{ product.quantity }} available)</span>
+                            {% elif product.quantity > 0 %}
+                                <span class="low-stock"> Low Stock ({{ product.quantity }} left)</span>
+                            {% else %}
+                                <span class="out-of-stock"> Out of Stock</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="product-actions">
+                            {% if product.quantity > 0 %}
+                                <form method="POST" action="{{ url_for('add_to_cart') }}" class="add-to-cart-form">
+                                    <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                                    <input type="number" name="quantity" class="quantity-input" 
+                                           value="1" min="1" max="{{ product.quantity }}" required>
+                                    <button type="submit" class="add-to-cart-btn">
+                                         Add to Cart
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button class="add-to-cart-btn" disabled>
+                                    Out of Stock
+                                </button>
+                            {% endif %}
+                            
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-products">
+                    <div class="no-products-icon"></div>
+                    <h3>No Products Found</h3>
+                    <p>Check back later for new arrivals!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function filterProducts() {
+            const typeFilter = document.getElementById('type-filter').value;
+            const priceFilter = document.getElementById('price-filter').value;
+            const stockFilter = document.getElementById('stock-filter').value;
+            
+            const products = document.querySelectorAll('.product-card');
+            
+            products.forEach(product => {
+                let show = true;
+                
+                // Type filter
+                if (typeFilter && product.dataset.type !== typeFilter) {
+                    show = false;
+                }
+                
+                // Price filter
+                if (priceFilter && show) {
+                    const price = parseFloat(product.dataset.price);
+                    const [min, max] = priceFilter.split('-').map(p => p.replace('+', ''));
+                    
+                    if (priceFilter === '200+') {
+                        if (price < 200) show = false;
+                    } else {
+                        const minPrice = parseFloat(min);
+                        const maxPrice = parseFloat(max);
+                        if (price < minPrice || price > maxPrice) show = false;
+                    }
+                }
+                
+                // Stock filter
+                if (stockFilter && show) {
+                    const stock = parseInt(product.dataset.stock);
+                    if (stockFilter === 'in-stock' && stock <= 10) show = false;
+                    if (stockFilter === 'low-stock' && (stock > 10 || stock === 0)) show = false;
+                }
+                
+                product.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        // Add quantity validation
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('change', function() {
+                const max = parseInt(this.getAttribute('max'));
+                const value = parseInt(this.value);
+                
+                if (value > max) {
+                    alert(`Only ${max} items available in stock`);
+                    this.value = max;
+                }
+                
+                if (value < 1) {
+                    this.value = 1;
+                }
+            });
+        });
+
+        // Add loading state to add to cart forms
+        document.querySelectorAll('.add-to-cart-form').forEach(form => {
+            form.addEventListener('submit', function() {
+                const submitBtn = this.querySelector('.add-to-cart-btn');
+                submitBtn.textContent = 'Adding...';
+                submitBtn.disabled = true;
+            });
+        });
+    </script>
+
+    <div >
+        <a href="/" class="back-button"> Home</a>
+     </div>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Medical Examinations{% endblock %}
+{% block content %}
+  <h1>🩺 Medical Examinations</h1>
+
+  <!-- ── Add New Examination (now with ID input) ────────────────────────── -->
+  <div class="card">
+    <h2>Add New Examination</h2>
+    <form action="{{ url_for('add_examination') }}" method="post">
+      <div class="form-group">
+        <label for="id">ID</label>
+        <input
+          type="number"
+          id="id"
+          name="id"
+          placeholder="e.g. 101"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="e.g. eye Test"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="price">Price (USD)</label>
+        <input
+          type="number"
+          id="price"
+          name="price"
+          placeholder="e.g. 50.00"
+          step="0.01"
+          min="0"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="cost">Cost (USD)</label>
+        <input
+          type="number"
+          id="cost"
+          name="cost"
+          placeholder="e.g. 30.00"
+          step="0.01"
+          min="0"
+          required
+        />
+      </div>
+      <button type="submit">➕ Add Exam</button>
+    </form>
+  </div>
+  <!-- ────────────────────────────────────────────────────────────── -->
+
+  <!-- ── Existing Exams (ID column unchanged) ───────────────────────────────── -->
+  <div class="card" style="margin-top: 2rem;">
+    <h2>Existing Exams</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Cost</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for (eid, name, price, cost) in exams %}
+        <tr>
+          <td>{{ eid }}</td>
+          <td>{{ name }}</td>
+          <td>{{ price }}</td>
+          <td>{{ cost }}</td>
+          <td class="actions">
+            <button
+              class="btn small"
+              onclick="document.getElementById('edit-ex-{{ eid }}').classList.toggle('hidden')"
+            >
+              ✏️ Edit
+            </button>
+
+            <form
+              id="edit-ex-{{ eid }}"
+              class="hidden inline-form"
+              action="{{ url_for('edit_examination', exam_id=eid) }}"
+              method="post"
+            >
+              <div class="form-group" style="display:inline-flex; gap:0.5rem;">
+                <label for="edit-id-{{ eid }}" class="hidden">ID</label>
+                <input
+                  type="number"
+                  name="id"
+                  id="edit-id-{{ eid }}"
+                  value="{{ eid }}"
+                  required
+                  style="width:4rem;"
+                />
+                <input
+                  type="text"
+                  name="name"
+                  value="{{ name }}"
+                  required
+                  placeholder="Name"
+                  style="width:7rem;"
+                />
+                <input
+                  type="number"
+                  name="price"
+                  value="{{ price }}"
+                  required
+                  step="0.01"
+                  min="0"
+                  style="width:5rem;"
+                />
+                <input
+                  type="number"
+                  name="cost"
+                  value="{{ cost }}"
+                  required
+                  step="0.01"
+                  min="0"
+                  style="width:5rem;"
+                />
+                <button type="submit">✔️</button>
+              </div>
+            </form>
+
+            <form
+              class="inline-form"
+              action="{{ url_for('delete_examination', exam_id=eid) }}"
+              method="post"
+            >
+              <button type="submit" class="btn danger">🗑️ Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- ────────────────────────────────────────────────────────────── -->
+{% endblock %}

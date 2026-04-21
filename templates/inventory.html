@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Inventory for Warehouse {{ wh_info[0] }}{% endblock %}
+{% block content %}
+  <h1>📦 Inventory: Warehouse {{ wh_info[0] }} (Branch {{ wh_info[1] or '—' }})</h1>
+
+  <div class="card">
+    <h2>Add Product to This Warehouse</h2>
+    <form action="{{ url_for('add_inventory', warehouse_id=wh_info[0]) }}" method="post">
+      <div class="form-group">
+        <label for="product_id">Product</label>
+        <select id="product_id" name="product_id" required>
+          <option value="">—Select Product—</option>
+          {% for (pid, ptype) in all_products %}
+            <option value="{{ pid }}">{{ ptype }} (ID {{ pid }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" name="quantity" placeholder="e.g. 20" required/>
+      </div>
+      <button type="submit">➕ Add to Inventory</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Current Inventory</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Product ID</th>
+          <th>Type</th>
+          <th>Qty</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for (pid, ptype, qty) in items %}
+        <tr>
+          <td>{{ pid }}</td>
+          <td>{{ ptype }}</td>
+          <td>{{ qty }}</td>
+          <td class="actions">
+            <button class="btn small" onclick="document.getElementById('edit-i-{{ pid }}').classList.toggle('hidden')">
+              ✏️ Edit
+            </button>
+            <form id="edit-i-{{ pid }}"
+                  class="hidden inline-form"
+                  action="{{ url_for('edit_inventory', warehouse_id=wh_info[0], product_id=pid) }}"
+                  method="post">
+              <input type="number" name="quantity" value="{{ qty }}" required/>
+              <button type="submit">✔️</button>
+            </form>
+
+            <form class="inline-form"
+                  action="{{ url_for('delete_inventory', warehouse_id=wh_info[0], product_id=pid) }}"
+                  method="post">
+              <button type="submit" class="btn danger">🗑️ Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <a href="{{ url_for('warehouses') }}" class="btn">← Back to Warehouses</a>
+{% endblock %}

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - Optics Store</title>
+
+    <link rel="stylesheet" href="../static/css/order_history.css" /> 
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Hello, {{customer_info[1] }}! Here's your Order History</h1>
+            <p>Complete order tracking and history management</p>
+        </div>
+
+        {% if error %}
+            <div class="error-message">
+                 {{ error }}
+            </div>
+        {% else %}
+            <div class="customer-info">
+                <h2> Customer Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Customer Name</div>
+                        <div class="info-value">{{ customer_info[1] }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Phone Number</div>
+                        <div class="info-value">{{ customer_info[2] }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Location</div>
+                        <div class="info-value">{{ customer_info[3] }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Customer ID</div>
+                        <div class="info-value">#{{ customer_info[0] }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-stats">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_orders }}</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${{ "%.2f"|format(total_spent) }}</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${{ "%.2f"|format(total_outstanding) }}</div>
+                    <div class="stat-label">Outstanding Balance</div>
+                </div>
+            </div>
+
+            {% if orders %}
+                <div class="section">
+                    <h3> Order History</h3>
+                    {% for order in orders %}
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div class="order-info">
+                                    <div class="label">Order ID</div>
+                                    <div class="value">#{{ order[0] }}</div>
+                                </div>
+                                <div class="order-info">
+                                    <div class="label">Date</div>
+                                    <div class="value">{{ order[1] }}</div>
+                                </div>
+                                <div class="order-info">
+                                    <div class="label">Total Price</div>
+                                    <div class="value">${{ "%.2f"|format(order[2]) }}</div>
+                                </div>
+                                <div class="order-info">
+                                    <div class="label">Paid Amount</div>
+                                    <div class="value">${{ "%.2f"|format(order[3]) }}</div>
+                                </div>
+                                <div class="order-info">
+                                    <div class="label">Branch</div>
+                                    <div class="value">{{ order[6] }}</div>
+                                </div>
+                                <div class="order-info">
+                                    <div class="label">Status</div>
+                                    <div class="value">
+                                        <span class="order-status {% if order[7] == 'Completed' %}status-completed{% elif order[7] == 'Partially Paid' %}status-partially-paid{% else %}status-pending{% endif %}">
+                                            {{ order[7] }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="order-details">
+                                <h4> Products Ordered</h4>
+                                <table class="products-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Name</th>
+                                            <th>Type</th>
+                                            <th>Quantity</th>
+                                            <th>Unit Price</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for detail in order_details[order[0]] %}
+                                            <tr>
+                                                <td>{{ detail[1] }}</td>
+                                                <td>{{ detail[2] }}</td>
+                                                <td>{{ detail[3] }}</td>
+                                                <td>${{ "%.2f"|format(detail[4]) }}</td>
+                                                <td>${{ "%.2f"|format(detail[5]) }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                
+                                {% if order[5] > 0 %}
+                                    <p >
+                                         Discount Applied: ${{ "%.2f"|format(order[5]) }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if payments %}
+                <div class="section">
+                    <h3> Payment History</h3>
+                    {% for payment in payments %}
+                        <div class="payment-card">
+                            <div class="card-header">
+                                <div class="card-title">Payment for Order #{{ payment[0] }}</div>
+                            </div>
+                            <div class="card-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Payment Method</div>
+                                    <div class="detail-value">{{ payment[1] }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Amount Paid</div>
+                                    <div class="detail-value">${{ "%.2f"|format(payment[2]) }}</div>
+                                </div>
+                                {% if payment[3] > 0 %}
+                                    <div class="detail-item">
+                                        <div class="detail-label">Insurance Discount</div>
+                                        <div class="detail-value">${{ "%.2f"|format(payment[3]) }}</div>
+                                    </div>
+                                {% endif %}
+                                {% if payment[4] %}
+                                    <div class="detail-item">
+                                        <div class="detail-label">Insurance Provider</div>
+                                        <div class="detail-value">{{ payment[4] }}</div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if examinations %}
+                <div class="section">
+                    <h3> Medical Examinations</h3>
+                    {% for exam in examinations %}
+                        <div class="exam-card">
+                            <div class="card-header">
+                                <div class="card-title">{{ exam[1] }}</div>
+                                <div class="card-date">{{ exam[2] }}</div>
+                            </div>
+                            <div class="card-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Result</div>
+                                    <div class="detail-value">{{ exam[3] }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Price</div>
+                                    <div class="detail-value">${{ "%.2f"|format(exam[4]) }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Payment Method</div>
+                                    <div class="detail-value">{{ exam[6] }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if not orders and not payments and not examinations %}
+                <div class="section">
+                    <div >
+                        <h3> No Order History Found</h3>
+                        <p>You havn't made any orders yet.</p>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+
+        <div >
+            <a href="/" class="back-button"> Home</a>
+        </div>
+    </div>
+</body>
+</html>

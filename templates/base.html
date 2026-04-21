@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Admin Panel{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h2>🔧 {{session.get('user_type')}} Dashboard</h2>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('home') }}">Home</a></li>
+          {% if session.get('user_type') == 'owner' or session.get('user_type') == 'manager' %}
+            <li><a href="{{ url_for('branches') }}">Manage Branches</a></li>
+            {% if session.get('user_type') == 'owner' %}
+              <li><a href="{{ url_for('managers') }}">Manage Managers</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('employees') }}">Manage Employees</a></li>
+          {% endif %}
+          <li><a href="{{ url_for('purchase_orders') }}">Purchase Orders</a></li>
+          <li><a href="{{ url_for('examinations') }}">Medical Examinations</a></li>
+          <li><a href="{{ url_for('products2') }}">Products</a></li>
+          <li><a href="{{ url_for('warehouses') }}">Warehouses</a></li>
+          <li><a href="{{ url_for('suppliers') }}">Suppliers</a></li>
+          <a href="{{ url_for('stats') }}">Statistics</a>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-container">
+            {% for category, msg in messages %}
+              <div class="flash flash-{{ category }}">{{ msg }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}
+      {% endblock %}
+    </main>
+  </div>
+</body>
+</html>

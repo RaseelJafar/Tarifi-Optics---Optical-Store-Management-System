@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Purchase Orders{% endblock %}
+{% block content %}
+<h1>📦 Purchase Orders</h1>
+<a href="{{ url_for('create_purchase_order') }}" class="btn btn-primary">+ New Purchase Order</a>
+
+<br><br>
+
+{% if orders %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Supplier</th>
+            <th>Date</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order[0] }}</td>  <!-- purchase_order_id -->
+            <td>{{ order[2] }}</td>  <!-- supplier_name -->
+            <td>{{ order[1] }}</td>  <!-- purchase_date -->
+            <td>
+                <a href="{{ url_for('view_purchase_order', order_id=order[0]) }}" class="btn btn-info btn-sm">
+                    🔍 View
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">
+    <strong>No purchase orders found.</strong>
+    <br>
+    <a href="{{ url_for('create_purchase_order') }}">Create your first purchase order</a>
+</div>
+{% endif %}
+
+{% endblock %}

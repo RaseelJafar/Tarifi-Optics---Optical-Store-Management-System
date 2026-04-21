@@ -1,0 +1,91 @@
+<!-- product_statistics.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Statistics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+        h2, h4 {
+            color: #333;
+        }
+        ul {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        canvas {
+            max-width: 700px;
+            margin: 40px auto;
+            display: block;
+        }
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>📦 Product Sales Statistics</h2>
+
+    <h4>🍭 Top-Selling Products</h4>
+    <ul>
+        {% for name, total in best_sellers %}
+            <li>{{ name }} — {{ total }} units sold</li>
+        {% endfor %}
+    </ul>
+
+    <h4>🎯 Product Type Popularity</h4>
+    <canvas id="categoryChart"></canvas>
+
+    <h4>🔥 Trending This Month</h4>
+    <canvas id="trendingChart"></canvas>
+
+    <a href="{{ url_for('products') }}" class="btn-back">⬅️ Back to Products</a>
+
+    <script>
+        const categoryLabels = {{ category_data|map(attribute=0)|list|tojson }};
+        const categoryCounts = {{ category_data|map(attribute=1)|list|tojson }};
+
+        const trendingLabels = {{ trending_names|tojson }};
+        const trendingCounts = {{ trending_counts|tojson }};
+
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'pie',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    data: categoryCounts,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+                }]
+            }
+        });
+
+        new Chart(document.getElementById('trendingChart'), {
+            type: 'bar',
+            data: {
+                labels: trendingLabels,
+                datasets: [{
+                    label: 'Units Sold (Last 30 Days)',
+                    data: trendingCounts,
+                    backgroundColor: '#4CAF50'
+                }]
+            }
+        });
+    </script>
+</body>
+</html>

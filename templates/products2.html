@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+{% block title %}Products{% endblock %}
+{% block content %}
+  <h1>📦 Products</h1>
+
+  <!-- Add New Product  -->
+  <div class="card">
+    <h2>➕ Add New Product</h2>
+    <form id="add-form" action="{{ url_for('add_product') }}" method="post">
+      <!-- Product ID -->
+      <div class="form-group">
+        <label for="id">ID</label>
+        <input
+          type="number"
+          id="id"
+          name="id"
+          placeholder="e.g. 1001"
+          min="1"
+          required
+        />
+      </div>
+
+      <!-- Quantity -->
+      <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input
+          type="number"
+          id="quantity"
+          name="quantity"
+          placeholder="e.g. 100"
+          min="0"
+          required
+        />
+      </div>
+
+      <!-- Price (USD) -->
+      <div class="form-group">
+        <label for="price">Price (USD)</label>
+        <input
+          type="number"
+          step="0.01"
+          id="price"
+          name="price"
+          placeholder="e.g. 20.00"
+          min="0"
+          required
+        />
+      </div>
+
+      <!-- Cost (USD) -->
+      <div class="form-group">
+        <label for="cost">Cost (USD)</label>
+        <input
+          type="number"
+          step="0.01"
+          id="cost"
+          name="cost"
+          placeholder="e.g. 12.50"
+          min="0"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="image_path">Image Path</label>
+        <input type="text" id="image_path" name="image_path" placeholder="/images/glass.jpg" required/>
+      </div>
+
+      <!-- Type (select) -->
+      <div class="form-group">
+        <label for="product_type">Type</label>
+        <select
+          id="product_type"
+          name="product_type"
+          required
+          onchange="toggleSubtypeFields('add')"
+        >
+          <option value="">— Select Type —</option>
+          <option value="Sunglasses">Sunglasses</option>
+          <option value="Optical Glasses">Optical Glasses</option>
+          <option value="Lenses">Lenses</option>
+          <option value="Accessories">Accessories</option>
+        </select>
+      </div>
+
+      <!-- Subtype: Sunglasses -->
+      <div id="add-sunglasses-fields" class="subtype-fields hidden">
+        <div class="form-group">
+          <label for="s_color">Color (Sunglasses)</label>
+          <input type="text" id="s_color" name="s_color" placeholder="e.g. Black" />
+        </div>
+        <div class="form-group">
+          <label for="company_name">Company Name (Sunglasses)</label>
+          <input
+            type="text"
+            id="company_name"
+            name="company_name"
+            placeholder="e.g. Ray-Ban"
+          />
+        </div>
+      </div>
+
+      <!-- Subtype: Optical Glasses -->
+      <div id="add-optical-fields" class="subtype-fields hidden">
+        <div class="form-group">
+          <label for="optical_type">Optical Type</label>
+          <input
+            type="text"
+            id="optical_type"
+            name="optical_type"
+            placeholder="e.g. Progressive"
+          />
+        </div>
+        <div class="form-group">
+          <label for="degree">Degree</label>
+          <input
+            type="number"
+            step="0.01"
+            id="degree"
+            name="degree"
+            placeholder="e.g. 2.50"
+          />
+        </div>
+      </div>
+
+      <!-- Subtype: Lenses -->
+      <div id="add-lenses-fields" class="subtype-fields hidden">
+        <div class="form-group">
+          <label for="l_color">Color (Lenses)</label>
+          <input
+            type="text"
+            id="l_color"
+            name="l_color"
+            placeholder="e.g. Transparent"
+          />
+        </div>
+      </div>
+
+      <!-- Subtype: Accessories -->
+      <div id="add-accessories-fields" class="subtype-fields hidden">
+        <div class="form-group">
+          <label for="a_type">Accessory Type</label>
+          <input
+            type="text"
+            id="a_type"
+            name="a_type"
+            placeholder="e.g. Case"
+          />
+        </div>
+      </div>
+
+      <button type="submit">➕ Add Product</button>
+    </form>
+  </div>
+  <!-- ──────────────────────────────────────────────────────────────── -->
+
+  <!-- ── Existing Products ───────────────────────────────────────────── -->
+  <div class="card" style="margin-top: 2rem;">
+    <h2>Existing Products</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Qty</th>
+          <th>Price (USD)</th>
+          <th>Cost (USD)</th>
+          <th>Type</th>
+          <th>Img Path</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+  {% for pid, qty, price, cost, ptype, img_path in products2 %}
+  <tr>
+    <td>{{ pid }}</td>
+    <td>{{ qty }}</td>
+    <td>{{ price }}</td>
+    <td>{{ cost }}</td>
+    <td>{{ ptype }}</td>
+    <td>{{ img_path }}</td>
+    <td class="actions">
+      <!-- Edit button now toggles the form itself AND shows subtype fields -->
+      <button
+        class="btn small"
+        onclick="
+          document.getElementById('edit-{{ pid }}').classList.toggle('hidden');
+          toggleSubtypeFields('edit-{{ pid }}');
+        "
+      >
+        ✏️ Edit
+      </button>
+
+      <!-- Inline Edit Form -->
+      <form
+        id="edit-{{ pid }}"
+        class="hidden inline-form"
+        action="{{ url_for('edit_product', prod_id=pid) }}"
+        method="post"
+      >
+        <!-- New ID -->
+        <input
+          type="number"
+          name="id"
+          value="{{ pid }}"
+          min="1"
+          required
+          style="width:5rem;"
+        />
+
+        <!-- Quantity -->
+        <input
+          type="number"
+          name="quantity"
+          value="{{ qty }}"
+          min="0"
+          required
+          style="width:5rem;"
+        />
+
+        <!-- Price (USD) -->
+        <input
+          type="number"
+          step="0.01"
+          name="price"
+          value="{{ price }}"
+          min="0"
+          required
+          style="width:6rem;"
+        />
+
+        <!-- Cost (USD) -->
+        <input
+          type="number"
+          step="0.01"
+          name="cost"
+          value="{{ cost }}"
+          min="0"
+          required
+          style="width:6rem;"
+        />
+
+        <!-- Image Path -->
+        <input type="text"
+          name="image_path"
+          value="{{ img_path }}"
+
+          style="width: 12rem;"/>
+
+        <!-- Type select -->
+        <select
+          name="product_type"
+          id="ptype-{{ pid }}"
+          required
+          onchange="toggleSubtypeFields('edit-{{ pid }}')"
+          style="width:9rem;"
+        >
+          <option value="">— Select Type —</option>
+          <option value="Sunglasses" {% if ptype == "Sunglasses" %}selected{% endif %}>
+            Sunglasses
+          </option>
+          <option value="Optical Glasses" {% if ptype == "Optical Glasses" %}selected{% endif %}>
+            Optical Glasses
+          </option>
+          <option value="Lenses" {% if ptype == "Lenses" %}selected{% endif %}>
+            Lenses
+          </option>
+          <option value="Accessories" {% if ptype == "Accessories" %}selected{% endif %}>
+            Accessories
+          </option>
+        </select>
+
+        <!-- Subtype: Sunglasses -->
+        <div id="edit-{{ pid }}-sunglasses-fields" class="subtype-fields hidden" style="display:inline-block;">
+          <input
+            type="text"
+            name="s_color"
+            value="{% if ptype == 'Sunglasses' %}{{ get_sunglasses_color(pid) }}{% endif %}"
+            placeholder="Color"
+            style="width:6rem;"
+          />
+          <input
+            type="text"
+            name="company_name"
+            value="{% if ptype == 'Sunglasses' %}{{ get_sunglasses_company(pid) }}{% endif %}"
+            placeholder="Company"
+            style="width:6rem;"
+          />
+        </div>
+
+        <!-- Subtype: Optical Glasses -->
+        <div id="edit-{{ pid }}-optical-fields" class="subtype-fields hidden" style="display:inline-block;">
+          <input
+            type="text"
+            name="optical_type"
+            value="{% if ptype == 'Optical Glasses' %}{{ get_optical_type(pid) }}{% endif %}"
+            placeholder="Optical Type"
+            style="width:8rem;"
+          />
+          <input
+            type="number"
+            step="0.01"
+            name="degree"
+            value="{% if ptype == 'Optical Glasses' %}{{ get_optical_degree(pid) }}{% endif %}"
+            placeholder="Degree"
+            style="width:5rem;"
+          />
+        </div>
+
+        <!-- Subtype: Lenses -->
+        <div id="edit-{{ pid }}-lenses-fields" class="subtype-fields hidden" style="display:inline-block;">
+          <input
+            type="text"
+            name="l_color"
+            value="{% if ptype == 'Lenses' %}{{ get_lenses_color(pid) }}{% endif %}"
+            placeholder="Color"
+            style="width:6rem;"
+          />
+        </div>
+
+        <!-- Subtype: Accessories -->
+        <div id="edit-{{ pid }}-accessories-fields" class="subtype-fields hidden" style="display:inline-block;">
+          <input
+            type="text"
+            name="a_type"
+            value="{% if ptype == 'Accessories' %}{{ get_accessory_type(pid) }}{% endif %}"
+            placeholder="Accessory Type"
+            style="width:6rem;"
+          />
+        </div>
+
+        <button type="submit">✔️</button>
+      </form>
+
+      <!-- Delete -->
+      <form
+        class="inline-form"
+        action="{{ url_for('delete_product', prod_id=pid) }}"
+        method="post"
+      >
+        <button type="submit" class="btn danger">🗑️ Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+
+    </table>
+  </div>
+
+  <!-- ── Hidden DIV to carry product IDs as JSON ──────────────────────── -->
+  <div
+    id="product-data"
+    style="display:none"
+    data-ids="{{ products | map(attribute=0) | list | tojson }}"
+  ></div>
+
+  <!-- ── JavaScript to show/hide subtype fields ──────────────────────── -->
+  <script>
+    function toggleSubtypeFields(prefix) {
+      // prefix is 'add' for the add‐form, or 'edit-<pid>' for inline edit
+      let typeSelect;
+      if (prefix === 'add') {
+        typeSelect = document.getElementById('product_type');
+      } else {
+        const pid = prefix.split('-')[1];
+        typeSelect = document.getElementById(`ptype-${pid}`);
+      }
+      if (!typeSelect) return;
+
+      const val = typeSelect.value;
+      const names = ['sunglasses', 'optical', 'lenses', 'accessories'];
+
+      // Hide all subtype containers
+      names.forEach(name => {
+        const container = document.getElementById(`${prefix}-${name}-fields`);
+        if (container) container.classList.add('hidden');
+      });
+
+      // Show only the matching container
+      if (val === 'Sunglasses') {
+        const c = document.getElementById(`${prefix}-sunglasses-fields`);
+        if (c) c.classList.remove('hidden');
+      } else if (val === 'Optical Glasses') {
+        const c = document.getElementById(`${prefix}-optical-fields`);
+        if (c) c.classList.remove('hidden');
+      } else if (val === 'Lenses') {
+        const c = document.getElementById(`${prefix}-lenses-fields`);
+        if (c) c.classList.remove('hidden');
+      } else if (val === 'Accessories') {
+        const c = document.getElementById(`${prefix}-accessories-fields`);
+        if (c) c.classList.remove('hidden');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1) Show fields for the Add form immediately
+      toggleSubtypeFields('add');
+
+      // 2) Read product IDs from the hidden <div> and toggle each "edit-<pid>"
+      const dataDiv = document.getElementById('product-data');
+      if (!dataDiv) return;
+
+      let productIds;
+      try {
+        productIds = JSON.parse(dataDiv.getAttribute('data-ids'));
+      } catch {
+        productIds = [];
+      }
+
+      productIds.forEach(pid => {
+        toggleSubtypeFields(`edit-${pid}`);
+      });
+    });
+  </script>
+{% endblock %}
